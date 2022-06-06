@@ -35,7 +35,7 @@ class Play extends Phaser.Scene {
 
         this.p1Score = 0;
 
-        let scoreConfig = {
+        scoreConfig = {
             fontFamily: 'Courier',
             fontSize: '28px',
             backgroundColor: '#F3B141',
@@ -47,25 +47,47 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         }
-        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
 
+        let timerConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'right',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 150
+        }
+
+
+        this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
+        this.timerRight = this.add.text(10*(borderUISize + borderPadding), borderUISize + borderPadding*2, game.settings.gameTimer/1000, timerConfig);
+        this.timerRight.text = "Timer: " + game.settings.gameTimer/1000;
         this.gameOver = false;
 
         scoreConfig.fixedWidth = 0;
-        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
-            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← to Menu', scoreConfig).setOrigin(0.5);
-            this.gameOver = true;
-        }, null, this);
+        timerConfig.fixedWidth = 0;
+      
 
         this.speedup = this.time.delayedCall(30000, () => {
             game.settings.spaceshipSpeed *= 1.5;
             console.log("speed up");
         }, null, this);
-        
+        this.currentTimeLeft = game.settings.gameTimer/1000;
+        this.previousTime = game.getTime();
+    
     }
-
-    update() {
+    
+    update(time, delta) {
+        if(time-this.previousTime > 1000 && !this.gameOver){
+            console.log("time = " + time + " previousTime = " + this.previousTime);
+            this.currentTimeLeft = this.currentTimeLeft - 1;
+            console.log("Current time left = " + this.currentTimeLeft);
+            this.timerRight.text = "Timer: " + this.currentTimeLeft;
+            this.previousTime = time;
+        }
         if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             game.settings.spaceshipSpeed /= 1.5;
             this.scene.restart();
@@ -92,6 +114,13 @@ class Play extends Phaser.Scene {
             this.p1Rocket.reset();
             this.shipExplode(this.ship01);
         }
+
+
+       if(this.currentTimeLeft <= 0){
+            this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← to Menu', scoreConfig).setOrigin(0.5);
+            this.gameOver = true;
+        }
     }
 
     checkCollision(rocket, ship) {
@@ -115,7 +144,24 @@ class Play extends Phaser.Scene {
             boom.destroy();                       
         });
         this.p1Score += ship.points;
-        this.scoreLeft.text = this.p1Score; 
-        this.sound.play('sfx_explosion');
+        this.scoreLeft.text = this.p1Score;
+        this.currentTimeLeft += game.settings.addedTime;
+        this.timerRight.text = "Timer: " + this.currentTimeLeft;
+        this.previousTime = game.getTime();
+        let rand = Phaser.Math.Between(0,4);
+        if(rand < 1){
+            this.sound.play('explosion1');
+            console.log("explosion 1");
+        } else if(rand < 2){
+            this.sound.play('explosion2');
+            console.log("explosion 2");
+        } else if(rand < 3){
+            this.sound.play('explosion3');
+            console.log("explosion 3");
+        } else {
+            this.sound.play('explosion4');
+            console.log("explosion 4");
+        }
+        
       }
 }
