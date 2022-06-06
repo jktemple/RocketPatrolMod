@@ -32,6 +32,7 @@ class Menu extends Phaser.Scene {
         menuConfig.color = '#000';
         this.add.image(0,0,'menu').setOrigin(0,0);
        mouse = this.input.activePointer;
+       this.input.mouse.disableContextMenu();
         //keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         //keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
     }
