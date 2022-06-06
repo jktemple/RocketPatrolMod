@@ -22,10 +22,7 @@ class Play extends Phaser.Scene {
         this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'spaceship', 0, 20, Phaser.Math.Between(-1, 1)).setOrigin(0,0);
         this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10, Phaser.Math.Between(-1, 1)).setOrigin(0,0);
 
-        keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
-        keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
-        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        mouse = this.input.activePointer;
 
         this.anims.create({
             key: 'explode',
@@ -82,17 +79,17 @@ class Play extends Phaser.Scene {
     
     update(time, delta) {
         if(time-this.previousTime > 1000 && !this.gameOver){
-            console.log("time = " + time + " previousTime = " + this.previousTime);
+            //console.log("time = " + time + " previousTime = " + this.previousTime);
             this.currentTimeLeft = this.currentTimeLeft - 1;
-            console.log("Current time left = " + this.currentTimeLeft);
+            //console.log("Current time left = " + this.currentTimeLeft);
             this.timerRight.text = "Timer: " + this.currentTimeLeft;
             this.previousTime = time;
         }
-        if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
+        if(this.gameOver && mouse.leftButtonDown()) {
             game.settings.spaceshipSpeed /= 1.5;
             this.scene.restart();
         }
-        if(this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
+        if(this.gameOver && mouse.rightButtonDown()) {
             this.scene.start("menuScene");
         }
         this.starfield.tilePositionX -= 4;  // update tile sprite
@@ -118,7 +115,7 @@ class Play extends Phaser.Scene {
 
        if(this.currentTimeLeft <= 0){
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
-            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart or ← to Menu', scoreConfig).setOrigin(0.5);
+            this.add.text(game.config.width/2, game.config.height/2 + 64, 'Left Click to Restart or Right Click to Menu', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
         }
     }
