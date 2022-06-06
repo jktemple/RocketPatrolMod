@@ -12,6 +12,7 @@ class Menu extends Phaser.Scene {
         this.load.audio('explosion3', './assets/Explosion 3.wav');
         this.load.audio('explosion4', './assets/Explosion 4.wav');
         this.load.image('menu', './assets/Menu.png');
+        this.load.image('particle', 'assets/orangeParticle.png');
     }
 
     create() {
