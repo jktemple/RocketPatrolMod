@@ -32,8 +32,8 @@ class Play extends Phaser.Scene {
         });
 
         this.rocketDeath = this.add.particles('particle').createEmitter({
-            x: 0,
-            y: 0,
+            x: 400,
+            y: 400,
             speed: { min: -400, max: 400 },
             angle: { min: 0, max: 360 },
             scale: { start: 0.4, end: 0 },
