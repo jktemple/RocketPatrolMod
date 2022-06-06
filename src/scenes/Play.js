@@ -7,6 +7,7 @@ class Play extends Phaser.Scene {
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
         this.load.image('starfield', './assets/starfield.png');
+        this.load.image('particle', 'assets/orangeParticle.png');
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
     }
 
@@ -29,6 +30,17 @@ class Play extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('explosion', { start: 0, end: 9, first: 0}),
             frameRate: 30
         });
+
+        this.rocketDeath = this.add.particles('particle').createEmitter({
+            x: 0,
+            y: 0,
+            speed: { min: -400, max: 400 },
+            angle: { min: 0, max: 360 },
+            scale: { start: 0.4, end: 0 },
+            lifespan: 300,
+            frequency: -1,
+            quantity: 80
+        }); 
 
         this.p1Score = 0;
 
@@ -140,6 +152,10 @@ class Play extends Phaser.Scene {
             ship.alpha = 1;                       
             boom.destroy();                       
         });
+        
+        this.rocketDeath.setPosition(ship.x, ship.y);
+        this.rocketDeath.explode();
+
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
         this.currentTimeLeft += game.settings.addedTime;
